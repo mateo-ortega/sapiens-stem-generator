@@ -1,0 +1,8 @@
+customtkinter
+fpdf2
+google-genai
+groq
+pillow
+matplotlib
+arxiv
+ddgs

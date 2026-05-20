@@ -1,0 +1,35 @@
+# Python bytecode
+__pycache__/
+*.pyc
+*.pyo
+*.pyd
+
+# Virtual Environment
+venv/
+.venv/
+env/
+
+# Secrets
+.env
+*.env.local
+
+# Package Distribution
+dist/
+build/
+*.spec
+*.egg-info/
+
+# IDEs
+.vscode/
+.idea/
+*.swp
+*.code-workspace
+
+# App-specific runtime outputs (user-generated PDFs and caches)
+outputs/
+Homeworks/
+Tarea_*.pdf
+
+# OS
+Thumbs.db
+.DS_Store

@@ -421,6 +421,60 @@ _QUESTION_RENDERERS = {
     "short_answer": _render_short_answer,
 }
 
+# Alias para tipos que el LLM devuelve en español o con variantes
+_TYPE_ALIASES: dict[str, str] = {
+    "selección múltiple": "multiple_choice",
+    "seleccion multiple": "multiple_choice",
+    "seleccion_multiple": "multiple_choice",
+    "opción múltiple": "multiple_choice",
+    "opcion multiple": "multiple_choice",
+    "múltiple opción": "multiple_choice",
+    "multiple opcion": "multiple_choice",
+    "numérico": "numeric",
+    "numerico": "numeric",
+    "cálculo numérico": "numeric",
+    "calculo numerico": "numeric",
+    "problema de cálculo numérico": "numeric",
+    "problema de calculo numerico": "numeric",
+    "problema numérico": "numeric",
+    "problema numerico": "numeric",
+    "ensayo": "essay",
+    "argumentación": "essay",
+    "argumentacion": "essay",
+    "ensayo/argumentación": "essay",
+    "ensayo/argumentacion": "essay",
+    "resolución de problemas": "problem_solving",
+    "resolucion de problemas": "problem_solving",
+    "problema de resolución con pasos": "problem_solving",
+    "problema de resolucion con pasos": "problem_solving",
+    "resolución por pasos": "problem_solving",
+    "resolucion por pasos": "problem_solving",
+    "problem solving": "problem_solving",
+    "verdadero/falso": "true_false",
+    "verdadero falso": "true_false",
+    "verdadero o falso": "true_false",
+    "v/f": "true_false",
+    "respuesta corta": "short_answer",
+    "short answer": "short_answer",
+    "respuesta_corta": "short_answer",
+}
+
+
+def _normalize_q_type(raw: str) -> str:
+    """
+    Convierte el question_type devuelto por el LLM al key canónico esperado por
+    _QUESTION_RENDERERS. Soporta nombres en español, con/sin tilde, y con espacios
+    o guiones bajos como separadores.
+    """
+    if raw in _QUESTION_RENDERERS:
+        return raw
+    normalized = _TYPE_ALIASES.get(raw.lower().strip())
+    if normalized:
+        return normalized
+    # Último recurso: reemplazar espacios por _ y pasar a minúsculas
+    slug = raw.lower().strip().replace(" ", "_").replace("/", "_")
+    return slug if slug in _QUESTION_RENDERERS else "short_answer"
+
 
 # ---------------------------------------------------------------------------
 # Renderizador de clave de respuestas
@@ -443,7 +497,7 @@ def _render_answer_key(pdf: SapiensPDF, questions: list, heading_font: str, body
 
     for q in questions:
         idx = q.get("order_index", 0)
-        q_type = q.get("question_type", "unknown")
+        q_type = _normalize_q_type(q.get("question_type", "unknown"))
         bloom = q.get("bloom_level", "")
         points = q.get("points", 0)
         answer_key = q.get("answer_key", {})
@@ -637,7 +691,7 @@ def _render_new_format(pdf: SapiensPDF, questions: list, heading_font: str, body
             pdf.set_text_color(*PDF_COLORS["body_text"])
 
         # Renderizar según tipo
-        q_type = q.get("question_type", "short_answer")
+        q_type = _normalize_q_type(q.get("question_type", "short_answer"))
         content = q.get("content", {})
         idx = q.get("order_index", 0)
         points = q.get("points", 0)

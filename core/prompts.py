@@ -472,7 +472,7 @@ Genera un JSON estrictamente con esta estructura (sin formato markdown como ```j
   "introduction": "Párrafo motivacional que conecte al estudiante con aplicaciones reales del tema",
   "questions": [
     {{
-      "question_type": "tipo_de_pregunta",
+      "question_type": "DEBE ser exactamente uno de: multiple_choice | numeric | essay | problem_solving | true_false | short_answer",
       "order_index": 1,
       "bloom_level": "remember|understand|apply|analyze|evaluate|create",
       "points": 10.0,
